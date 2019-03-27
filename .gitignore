@@ -102,3 +102,11 @@ venv.bak/
 
 # mypy
 .mypy_cache/
+
+#LZL
+ignore
+*.ui
+other
+*.model
+.idea
+TEST.py

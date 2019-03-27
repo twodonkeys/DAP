@@ -1,0 +1,17 @@
+<RCC>
+  <qresource prefix="ICON">
+    <file>VIEW.png</file>
+    <file>EXIT.png</file>
+    <file>ANALYSE.png</file>
+    <file>STACK.png</file>
+    <file>SAVE.png</file>
+    <file>NEW.png</file>
+    <file>EXPAND.png</file>
+    <file>ABOUT.png</file>
+    <file>CONFIG.png</file>
+    <file>ico.ico</file>
+  </qresource>
+  <qresource prefix="LOGO">
+    <file>logo.png</file>
+  </qresource>
+</RCC>
