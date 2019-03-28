@@ -11,7 +11,7 @@ from PyQt5 import QtGui,QtWidgets,QtCore
 from PyQt5.QtCore import *
 from PyQt5.QtGui import *
 from PyQt5.QtWidgets import  QFileDialog,QMessageBox,QDockWidget,QListWidget,QLabel
-from SignupWindow import Ui_SignupWindow
+from ui.SignupWindow import Ui_SignupWindow
 import webbrowser
 import sys
 import sqlite3

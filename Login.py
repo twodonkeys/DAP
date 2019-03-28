@@ -12,7 +12,7 @@ from PyQt5 import QtCore,QtGui,QtWidgets
 from PyQt5.QtCore import *
 from PyQt5.QtGui import *
 from PyQt5.QtWidgets import  QFileDialog,QMessageBox,QDockWidget,QListWidget,QLabel
-from LoginWindow import Ui_LoginForm
+from ui.LoginWindow import Ui_LoginForm
 from Signup import MySignupWindow
 from Main import *
 import webbrowser

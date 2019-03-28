@@ -12,10 +12,10 @@ from PyQt5 import QtCore, QtGui, QtWidgets,sip,QtWinExtras
 from PyQt5.QtCore import *
 from PyQt5.QtGui import *
 from PyQt5.QtWidgets import *
-from UI import Ui_Form
-from MainWindow import Ui_MainWindow
-from About1 import Ui_Dialog
-from Configure import Ui_ConfigForm
+from ui.UI import Ui_Form
+from ui.MainWindow import Ui_MainWindow
+from ui.About1 import Ui_Dialog
+from ui.Configure import Ui_ConfigForm
 from scipy._lib import messagestream
 from sklearn.neighbors import typedefs
 from pandas._libs.tslibs import np_datetime,nattype
