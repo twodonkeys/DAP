@@ -1,12 +1,2 @@
-2019-04-04 15:42:55,585	File "Main.py",line 57	INFO: Open MainWindow
-NoneType: None
-2019-04-04 15:42:55,669	File "Main.py",line 57	INFO: Open ConfigWindow
-NoneType: None
-2019-04-04 15:42:59,978	File "Main.py",line 57	INFO: Perform database operations
-NoneType: None
-2019-04-04 15:43:02,388	File "Main.py",line 57	INFO: Create on-line analysis Window
-NoneType: None
-2019-04-04 15:43:03,188	File "Main.py",line 57	INFO: New新建在线分析模块1
-NoneType: None
-2019-04-04 15:43:37,758	File "Main.py",line 57	INFO: RASO is closing
+2019-04-04 16:06:32,480	File "Main.py",line 57	INFO: RASO is closing
 NoneType: None
