@@ -20,6 +20,7 @@ from scipy._lib import messagestream
 from sklearn.neighbors import typedefs
 from pandas._libs.tslibs import np_datetime,nattype
 from pandas._libs import skiplist
+from MyPlotly import MyPlotly
 import Linear
 import Ridge
 import MoreLinear
@@ -374,10 +375,15 @@ class MyWindow(QtWidgets.QWidget,Ui_Form):
             super(MyWindow,self).__init__()
             self.setupUi(self)
             # self.setWindowIcon((QIcon('resouce\\ico.ico')))
-            self.pushButton.clicked.connect(self.Work)
-            self.comboBox.currentTextChanged.connect(self.ComBoxChge)
             self.MySQL=MySQL
             self.Data=Data
+            #散点图
+            self.myplot = MyPlotly()
+            self.myplot.scatter_sub(self.MySQL[0], 3306, self.MySQL[1], self.MySQL[2], self.MySQL[3], "utf8",autoOpen=False)
+            #['127.0.0.1', 'root', '123456', 'rfl', 'rflll_1']
+            self.plotlyWeb.load(QUrl.fromLocalFile(self.myplot.get_plotly_path()))
+            self.pushButton.clicked.connect(self.Work)
+            self.comboBox.currentTextChanged.connect(self.ComBoxChge)
         except Exception as e:
             QMessageBox.critical(self,
                                  'Error',
@@ -413,9 +419,15 @@ class MyWindow(QtWidgets.QWidget,Ui_Form):
         self.textEdit.setText(switch[A])
 
     def Work(self):
-        self.thread=MyThread(self)
-        self.thread.update_text_singal.connect(self.update_text)
-        self.thread.start()
+        try:
+            self.thread=MyThread(self)
+            self.thread.update_text_singal.connect(self.update_text)
+            self.thread.start()
+        except Exception as e:
+            QMessageBox.critical(self,
+                                 'Error',
+                                 str(e))
+            MyLog.MyLogError(e)
 
     def update_text(self,text):
         self.textEdit_2.append(text)
@@ -432,8 +444,8 @@ class MyThread(QtCore.QThread):
         mywindow = self.parent
         CheckBoxValue = [0] * 16  # CheckBox值
         ComboxValue = mywindow.comboBox.currentIndex()  # 使用算法
-        Combox2Value = mywindow.comboBox_2.currentText()  # 参数1
-        Combox3Value = mywindow.comboBox_3.currentText()  # 参数2
+        # Combox2Value = mywindow.comboBox_2.currentText()  # 参数1
+        # Combox3Value = mywindow.comboBox_3.currentText()  # 参数2
         CheckBoxValue[0] = mywindow.radioButton.isChecked()
         CheckBoxValue[1] = mywindow.radioButton_2.isChecked()
         CheckBoxValue[2] = mywindow.radioButton_3.isChecked()
@@ -450,7 +462,6 @@ class MyThread(QtCore.QThread):
         CheckBoxValue[13] = mywindow.radioButton_14.isChecked()
         CheckBoxValue[14] = mywindow.radioButton_15.isChecked()
         CheckBoxValue[15] = mywindow.radioButton_16.isChecked()
-
         switch={
                 0: 'X1^0.5,',
                 1: 'X1,',
