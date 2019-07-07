@@ -24,6 +24,9 @@ from MyPlotly import MyPlotly
 import Linear
 import Ridge
 import MoreLinear
+import Load_linear
+import Load_ridge
+import Load_morelinear
 #import qdarkstyle#暗黑风格
 import sys
 import pymysql
@@ -32,10 +35,11 @@ import MyFunction
 import configparser#读取配置文件
 import os
 import logging
-import time
+from time import sleep
 import re
 from logging.handlers import TimedRotatingFileHandler
 from logging.handlers import RotatingFileHandler
+from tomorrow import threads
 #主窗口
 
 class MyLog():
@@ -76,6 +80,7 @@ class MyMainWindow(QMainWindow,Ui_MainWindow):
     password = config['Mysql']['password']
     db = config['Mysql']['db']
     table = config['Mysql']['table']
+    py2mysql=config['Mysql']['py2mysql']
     MySQL = [host, user, password, db, table]
     def __init__(self):
         MyLog.MyLogInfo("Open MainWindow")
@@ -97,7 +102,7 @@ class MyMainWindow(QMainWindow,Ui_MainWindow):
         try:
             self.count = self.count + 1
             sub = QMdiSubWindow()
-            sub.setWidget(MyWindow(self.MySQL,self.Data))
+            sub.setWidget(MyWindow(self.MySQL,self.Data,self.py2mysql))
             str1="新建在线分析模块" + str(self.count)
             MyLog.MyLogInfo("New"+str1)
             self.statusBar().showMessage(str1)
@@ -135,6 +140,7 @@ class MyMainWindow(QMainWindow,Ui_MainWindow):
         if reply==QMessageBox.Yes:
             MyLog.MyLogInfo("RASO is closing")
             Event.accept()
+            os._exit(0)###重要！在窗口关闭时，关闭所有进程！
         else:
             Event.ignore()
             MyLog.MyLogInfo("Cancel RASO close")
@@ -152,6 +158,7 @@ class MyMainWindow(QMainWindow,Ui_MainWindow):
 
     def setData(self,list):
         self.Data=list
+
 
 #关于窗口
 class AboutWindow(QtWidgets.QWidget,Ui_Dialog):
@@ -243,6 +250,8 @@ class ConfigWindow(QtWidgets.QWidget,Ui_ConfigForm):
             headerT = (','.join(headerT_)).split(',')
             tablecursor = cursor.execute(select_table)
             table = cursor.fetchall()
+            cursor.close()
+            db.close()
             self.Table_tableWidget.clear()
             rowcount = self.Table_tableWidget.rowCount()
             self.Table_tableWidget.setRowCount(rowcount + 100)
@@ -369,21 +378,27 @@ class ConfigWindow(QtWidgets.QWidget,Ui_ConfigForm):
 
 #在线分析子窗口
 class MyWindow(QtWidgets.QWidget,Ui_Form):
-    def __init__(self,MySQL,Data):
+    def __init__(self,MySQL,Data,py2mysql):
         try:
             MyLog.MyLogInfo("Create on-line analysis Window")
             super(MyWindow,self).__init__()
             self.setupUi(self)
             # self.setWindowIcon((QIcon('resouce\\ico.ico')))
-            self.MySQL=MySQL
-            self.Data=Data
+            self.MySQL=MySQL#数据库信息
+            self.Data=Data#选择的列名
+            self.exit_model=False
+            self.lock_en=False
+            # self.py2mysql=py2mysql
             #散点图
             self.myplot = MyPlotly()
-            self.myplot.scatter_sub(self.MySQL[0], 3306, self.MySQL[1], self.MySQL[2], self.MySQL[3], "utf8",autoOpen=False)
+            self.myplot.scatter_sub(self.MySQL, self.Data,"utf8",autoOpen=False)
             #['127.0.0.1', 'root', '123456', 'rfl', 'rflll_1']
             self.plotlyWeb.load(QUrl.fromLocalFile(self.myplot.get_plotly_path()))
             self.pushButton.clicked.connect(self.Work)
             self.comboBox.currentTextChanged.connect(self.ComBoxChge)
+            self.btn_exitmodel.clicked.connect(self.Exitmodel)
+            self.btn_loadmodel.clicked.connect(self.Loadmodel)
+            print('在线分析子窗口加载完毕！')
         except Exception as e:
             QMessageBox.critical(self,
                                  'Error',
@@ -431,6 +446,75 @@ class MyWindow(QtWidgets.QWidget,Ui_Form):
 
     def update_text(self,text):
         self.textEdit_2.append(text)
+
+    def Exitmodel(self):
+        print('Exitmodel')
+        self.ExitmodelThread()
+
+    @threads(5)
+    def ExitmodelThread(self):
+        print('ExitmodelThread')
+        self.exit_model=True
+        sleep(2)
+        self.lock_en=False
+        self.exit_model=False
+
+    def Loadmodel(self):
+        # 运行锁，防止一个窗口多个模型同时运行；
+        self.LoadmodelThread()
+
+    @threads(5)
+    def LoadmodelThread(self):
+        if self.lock_en==False:
+            CheckBoxValue = [0] * 16  # CheckBox值
+            ComboxValue = self.comboBox.currentIndex()  # 使用算法
+            CheckBoxValue[0] = self.radioButton.isChecked()
+            CheckBoxValue[1] = self.radioButton_2.isChecked()
+            CheckBoxValue[2] = self.radioButton_3.isChecked()
+            CheckBoxValue[3] = self.radioButton_4.isChecked()
+            CheckBoxValue[4] = self.radioButton_5.isChecked()
+            CheckBoxValue[5] = self.radioButton_6.isChecked()
+            CheckBoxValue[6] = self.radioButton_7.isChecked()
+            CheckBoxValue[7] = self.radioButton_8.isChecked()
+            CheckBoxValue[8] = self.radioButton_9.isChecked()
+            CheckBoxValue[9] = self.radioButton_10.isChecked()
+            CheckBoxValue[10] = self.radioButton_11.isChecked()
+            CheckBoxValue[11] = self.radioButton_12.isChecked()
+            CheckBoxValue[12] = self.radioButton_13.isChecked()
+            CheckBoxValue[13] = self.radioButton_14.isChecked()
+            CheckBoxValue[14] = self.radioButton_15.isChecked()
+            CheckBoxValue[15] = self.radioButton_16.isChecked()
+            ARR = [0] * 4
+            ARR[0] = self.checkBox.isChecked()
+            ARR[1] = self.checkBox_2.isChecked()
+            ARR[2] = self.checkBox_3.isChecked()
+            ARR[3] = self.checkBox_4.isChecked()
+            SelectX=ARR
+            CheckBoxValue_=CheckBoxValue
+            #linear
+            if self.comboBox.currentIndex()==0:
+                while self.exit_model==False:
+                    self.lock_en = True
+                    Modelreturn = Load_linear.Loadlinear(self.MySQL, self.Data, SelectX, CheckBoxValue)
+                    self.lab_Y.setText(str(Modelreturn))
+                    sleep(1)
+            # ridge
+            if self.comboBox.currentIndex() == 1:
+                while self.exit_model==False:
+                    self.lock_en=True
+                    Modelreturn = Load_ridge.Loadridge(self.MySQL, self.Data, SelectX, CheckBoxValue)
+                    self.lab_Y.setText(str(Modelreturn))
+                    sleep(1)
+            # morelinear
+            if self.comboBox.currentIndex() == 2:
+                while self.exit_model==False:
+                    self.lock_en = True
+                    Modelreturn = Load_morelinear.Loadmorelinear(self.MySQL, self.Data, SelectX, CheckBoxValue)
+                    self.lab_Y.setText(str(Modelreturn))
+                    sleep(1)
+    def closeEvent(self, event):
+        self.exit_model=True
+
 
 #传参线程
 class MyThread(QtCore.QThread):
@@ -495,8 +579,6 @@ class MyThread(QtCore.QThread):
                 CheckBoxValue_[i * 4+3] = False
         try:
             str1=''
-
-            n=0
             for x in list(range(0,16)):
                 if CheckBoxValue[x]==True :
                     str1+=switch[x]

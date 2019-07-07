@@ -19,7 +19,6 @@ import webbrowser
 import ctypes
 import sqlite3
 import hashlib
-
 import configparser#读取配置文件
 import numpy as np
 ctypes.windll.shell32.SetCurrentProcessExplicitAppUserModelID("myappid")#本行与import ctypes使用是为了使任务栏图标与标题栏图标一致

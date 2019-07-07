@@ -1,5 +1,5 @@
 1:命令行,cd到要打包的.py文件根目录下；
-2：运行 pyinstaller --onefile --windowed --icon="c:\Users\Administrator\PycharmProjects\LZL0704\ico.ico" Main.py
+2：运行 pyinstaller --onedir --windowed --icon="c:\Users\hero\PycharmProjects\DAP\ico.ico" Login.py
 3:出现递归错误：Maximum recursion depth exceeded解决办法：在根目录下打开生成的spce文件，顶部添加 
 	import sys
 	sys.setrecursionlimit(5000)
@@ -23,3 +23,10 @@
 	或者在spec文件中修改hiddenimports=['sklearn.neighbors.typedefs'],
 	或者在命令行添加--hidden-import=sklearn.neighbors.typedefs
 9:打包成功，不要忘记改回console=false，并重新打包。
+
+10：出现问题在spec中修改-debug=true，运行exe时可以查看错误信息
+11：datas存储需要的文件夹，也可以打包完成后自行拷贝。
+
+#########
+把db，config，html，logs文件夹拷贝至生成的Login.exe根目录
+把dist/MyPlotly中的plotly文件夹拷贝至生成的Login.exe根目录

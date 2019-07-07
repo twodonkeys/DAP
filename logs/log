@@ -1,2 +1,8 @@
-2019-04-04 16:06:32,480	File "Main.py",line 57	INFO: RASO is closing
+2019-07-06 16:42:19,760	File "Main.py",line 61	INFO: Perform database operations
+NoneType: None
+2019-07-06 16:42:23,220	File "Main.py",line 61	INFO: Create on-line analysis Window
+NoneType: None
+2019-07-06 16:42:24,648	File "Main.py",line 61	INFO: New新建在线分析模块1
+NoneType: None
+2019-07-06 16:42:45,021	File "Main.py",line 61	INFO: RASO is closing
 NoneType: None

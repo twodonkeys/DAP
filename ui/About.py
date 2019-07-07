@@ -42,7 +42,7 @@ class Ui_Form1(object):
 
     def retranslateUi(self, Form1):
         _translate = QtCore.QCoreApplication.translate
-        Form1.setWindowTitle(_translate("Form1", "About"))
+        Form1.setWindowTitle(_translate("Form1", "关于"))
         self.label_2.setText(_translate("Form1", "Twodonkeys"))
 
 import Resource_rc

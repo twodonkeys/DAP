@@ -1,10 +1,17 @@
+#!/usr/bin/python3
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+# @Time    : 2019/7/4 15:46
+# @Author  : Twodonkeys
+# @Email   :liangzhilv@qq.com
+# @Site    : 
+# @File    : Load_linear.py
+# @Software: PyCharm
+
 import numpy as np
-from sklearn.linear_model import LinearRegression
 import pymysql
-from sklearn.preprocessing import MinMaxScaler
 from sklearn.externals import joblib
 import MyFunction
-import Main
 #从数据库读取训练数据
 
 def getdata(ip,name,password,database_name,select_table):
@@ -14,7 +21,9 @@ def getdata(ip,name,password,database_name,select_table):
     rows_many = cursor.fetchall()
     rows_many = np.matrix(rows_many)
     rows_many = np.float32(rows_many)
-    X_value = rows_many[:, 0:, ]
+    cursor.close()
+    db.close()
+    X_value=rows_many[0]
     return X_value
 #数据方次转换
 def datatransform(inputdata,arr):
@@ -55,15 +64,9 @@ def datatransform(inputdata,arr):
     if arr_x4[3]==True:
         inputdata[:,3]=pow(inputdata[:,3],3)
     return inputdata
-#训练测试数据划分
-def trainingdata(breakpoint,inputdata):
-    X_train=inputdata[:breakpoint,0:-1]
-    Y_train=inputdata[:breakpoint,-1]
-    X_test=inputdata[breakpoint:,0:-1]
-    Y_test=inputdata[breakpoint:,-1]
-    return X_train,Y_train,X_test,Y_test
 
-def LinearMain(MySQL,Data,SelectX,ARR=[True,True,True,False,False,True,False,False,False,False,True,False,False,False,False,True]):
+def Loadlinear(MySQL,Data,SelectX,ARR=[True,True,True,False,False,True,False,False,False,False,True,False,False,False,False,True]):
+    print(Data)
     # 数据IP地址
     ip = MySQL[0]
     # 数据库数据用户名称
@@ -72,58 +75,44 @@ def LinearMain(MySQL,Data,SelectX,ARR=[True,True,True,False,False,True,False,Fal
     password = MySQL[2]
     # 数据库名称
     database_name = MySQL[3]
+    # 数据库表单
+    table=MySQL[4]+'_tx'
     # 数据库获取表
-    select_table = "select %s,%s,%s,%s,%s from %s" % (Data[0], Data[1], Data[2], Data[3], Data[4], MySQL[4])
+    select_table = "select %s,%s,%s,%s,%s from %s" % (Data[0], Data[1], Data[2], Data[3], Data[4], table)
     inputdata = getdata(ip, name, password, database_name, select_table)
-    print(inputdata)
     inputdata = np.array(inputdata)
-    print(inputdata)
     inputdata = datatransform(inputdata, ARR)
-    print(inputdata)
     list = MyFunction.BoolStr2list(SelectX, False)
     inputdata = np.delete(inputdata, list, axis=1)  # 删除复选框没有选中的变量数据
-    inputdata = np.matrix(inputdata)
-    print(inputdata)
-    # 测试训练数据分割点
-    break_point = int(inputdata.shape[0] * 2 / 3)
-    x_train, y_train, x_test, y_test = trainingdata(break_point, inputdata)
-    # 数据归一化
-    scaler = MinMaxScaler()
-    scaler1 = MinMaxScaler()
-    rf1 = scaler1.fit(y_train)
-    rf2 = scaler.fit(x_train)
-    xx_train = scaler.transform(x_train)
-    xx_test = scaler.transform(x_test)
-    yy_train = scaler1.transform(y_train)
-    # 获取训练结果数据的最大值及最小值
-    data_min = scaler1.data_min_
-    data_max = scaler1.data_max_
-    # 建立训练模型
-    lineargression = LinearRegression()
-    rf = lineargression.fit(xx_train, yy_train)
-    # 固化训练模型
-    joblib.dump(rf, 'model/linear.model')
-    # 固化数据归一化模型
-    joblib.dump(rf1, 'model/linear_y.model')
-    joblib.dump(rf2, 'model/linear_x.model')
-    # 测试集测试
-    outdata = lineargression.predict(xx_test)
-    outdata = outdata * (data_max - data_min) + data_min
-    count = 0
-    for x, y in zip(outdata, y_test):
-        if np.abs(x - y) / y <= 0.05:
-            count += 1
-    # 计算模型得分
-    score = count / y_test.shape[0]
-    coef = rf.coef_
-    intercept = rf.intercept_
-    x_Max = rf2.data_max_
-    print(type(x_Max))
-    x_Min = rf2.data_min_
-    print(type(x_Min))
-    y_Max = rf1.data_max_
-    y_Min = rf1.data_min_
-    return score, coef, intercept, x_Max, x_Min, y_Max, y_Min
+    inputdata = inputdata[:,0:-1]
+    # 加载训练好的模型
+    RF = joblib.load('model/linear.model')  # 训练模型
+    RF1 = joblib.load('model/linear_y.model')  # Y归一化模型
+    RF2 = joblib.load('model/linear_x.model')  # X归一化模型
+    # 或者用RF1.inverse_transform反归一化
+    data_result_min = RF1.data_min_
+    data_result_max = RF1.data_max_
+    # 训练数据归一化
+    inputdata = RF2.transform(inputdata)
+    # 模型计算
+    y_console = RF.predict(inputdata)
+    # 计算结果重构（反归一化）
+    # 或者用RF1.inverse_transform反归一化
+    y_console = y_console * (data_result_max - data_result_min) + data_result_min
+    # 打印结果
+    result=y_console[0,0]
+    print(result)
+    y_name=Data[-1]
+    print(y_name)
+    excute_table=" UPDATE %s SET %s = %s" % (table,y_name,result )
+    print(excute_table)
+    db = pymysql.connect(ip,name,password,database_name)
+    cursor = db.cursor()
+    cursor.execute(excute_table)
+    db.commit()
+    cursor.close()
+    db.close()
+    return result
 
 if __name__ == '__main__':
-    LinearMain()
+    Loadlinear()

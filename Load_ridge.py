@@ -1,7 +1,15 @@
+#!/usr/bin/python3
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+# @Time    : 2019/7/4 15:47
+# @Author  : Twodonkeys
+# @Email   :liangzhilv@qq.com
+# @Site    : 
+# @File    : Load_ridge.py
+# @Software: PyCharm
 import numpy as np
-from sklearn.linear_model import LinearRegression
-from sklearn.externals import joblib
 import pymysql
+from sklearn.externals import joblib
 import MyFunction
 
 #从数据库读取训练数据
@@ -12,7 +20,9 @@ def getdata(ip,name,password,database_name,select_table):
     rows_many = cursor.fetchall()
     rows_many = np.matrix(rows_many)
     rows_many = np.float32(rows_many)
-    X_value = rows_many[:, :, ]
+    cursor.close()
+    db.close()
+    X_value=rows_many[0]
     return X_value
 #数据方次转换
 def datatransform(inputdata,arr):
@@ -53,54 +63,44 @@ def datatransform(inputdata,arr):
     if arr_x4[3]==True:
         inputdata[:,3]=pow(inputdata[:,3],3)
     return inputdata
-#训练测试数据划分
-def trainingdata(break_point,inputdata):
-    X_train=inputdata[:break_point,:-1]
-    Y_train=inputdata[:break_point,-1]
-    X_test=inputdata[break_point:,:-1]
-    Y_test=inputdata[break_point:,-1]
-    return X_train,Y_train,X_test,Y_test
 
-def RidgeMain(MySQL,Data,SelectX,ARR):
-    #数据IP地址
-    ip=MySQL[0]
-    #数据库数据用户名称
-    name=MySQL[1]
-    #数据库密码
-    password=MySQL[2]
-    #数据库名称
-    database_name=MySQL[3]
-    #数据库获取表
-    select_table="select %s,%s,%s,%s,%s from %s"%(Data[0],Data[1],Data[2],Data[3],Data[4],MySQL[4])
-
-    #输入数据方次信号
-    #ARR=[False,True,False,False,False,True,False,False,False,True,False,False,False,True,False,False]
-    inputdata=getdata(ip,name,password,database_name,select_table)
-    inputdata=np.array(inputdata)
-    inputdata=datatransform(inputdata,ARR)
+def Loadridge(MySQL,Data,SelectX,ARR=[True,True,True,False,False,True,False,False,False,False,True,False,False,False,False,True]):
+    # 数据IP地址
+    ip = MySQL[0]
+    # 数据库数据用户名称
+    name = MySQL[1]
+    # 数据库密码
+    password = MySQL[2]
+    # 数据库名称
+    database_name = MySQL[3]
+    # 数据库表单
+    table=MySQL[4]+'_tx'
+    # 数据库获取表
+    select_table = "select %s,%s,%s,%s,%s from %s" % (Data[0], Data[1], Data[2], Data[3], Data[4], table)
+    inputdata = getdata(ip, name, password, database_name, select_table)
+    inputdata = np.array(inputdata)
+    inputdata = datatransform(inputdata, ARR)
     list = MyFunction.BoolStr2list(SelectX, False)
     inputdata = np.delete(inputdata, list, axis=1)  # 删除复选框没有选中的变量数据
-    inputdata=np.matrix(inputdata)
-    #测试训练数据分割点
-    break_point=int(inputdata.shape[0]*2/3)
-    x_train,y_train,x_test,y_test=trainingdata(break_point,inputdata)
+    inputdata = inputdata[:,0:-1]
+    # 加载训练好的模型
+    RF = joblib.load('model/ridge.model')  # 训练模型
+    # 模型计算
+    y_console = RF.predict(inputdata)
+    # 打印结果
+    result=y_console[0,0]
+    print(result)
+    y_name=Data[-1]
+    print(y_name)
+    excute_table=" UPDATE %s SET %s = %s" % (table,y_name,result )
+    print(excute_table)
+    db = pymysql.connect(ip,name,password,database_name)
+    cursor = db.cursor()
+    cursor.execute(excute_table)
+    db.commit()
+    cursor.close()
+    db.close()
+    return result
 
-    #建立训练模型
-    lineargression=LinearRegression()
-    rf=lineargression.fit(x_train,y_train)
-    joblib.dump(rf,'model/ridge.model')
-    #测试集测试
-    outdata=lineargression.predict(x_test)
-
-    c1 = 0
-    for i in range(len(outdata)):
-        a1 = y_test[i] * 0.05
-        b1 = np.abs(y_test[i] - outdata[i])
-        if b1 <= a1:
-            c1 += 1
-
-    #计算置信度
-    score=c1/len(outdata)
-    coef=rf.coef_
-    intercept=rf.intercept_
-    return score,coef,intercept
+if __name__ == '__main__':
+    Loadridge()

@@ -137,7 +137,7 @@ class Ui_SignupWindow(object):
 
     def retranslateUi(self, SignupWindow):
         _translate = QtCore.QCoreApplication.translate
-        SignupWindow.setWindowTitle(_translate("SignupWindow", "Signup"))
+        SignupWindow.setWindowTitle(_translate("SignupWindow", "注册"))
         self.label.setText(_translate("SignupWindow", "用户帐户"))
         self.lineEdit_User.setPlaceholderText(_translate("SignupWindow", "输入字母,数字,下划线"))
         self.label_2.setText(_translate("SignupWindow", "密    码"))

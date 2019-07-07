@@ -11,7 +11,7 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>About</string>
+   <string>关于</string>
   </property>
   <property name="windowIcon">
    <iconset>
@@ -76,7 +76,7 @@
  </widget>
  <resources>
   <include location="../resource/Resource.qrc"/>
-  <include location="Resource.qrc"/>
+  <include location="../resource/Resource.qrc"/>
  </resources>
  <connections/>
 </ui>

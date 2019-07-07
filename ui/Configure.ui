@@ -14,10 +14,10 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>Configure</string>
+   <string>配置</string>
   </property>
   <property name="windowIcon">
-   <iconset resource="resouce/Resource.qrc">
+   <iconset resource="../resource/Resource.qrc">
     <normaloff>:/ICON/ico.ico</normaloff>:/ICON/ico.ico</iconset>
   </property>
   <layout class="QHBoxLayout" name="horizontalLayout_13">
@@ -58,7 +58,7 @@
          </property>
          <widget class="QWidget" name="MySQL_Tab">
           <attribute name="title">
-           <string>MySQL Configure</string>
+           <string>MySQL配置</string>
           </attribute>
           <layout class="QVBoxLayout" name="verticalLayout_8">
            <item>
@@ -81,7 +81,7 @@
                <item>
                 <widget class="QLabel" name="label_2">
                  <property name="text">
-                  <string>IP</string>
+                  <string>IP地址：</string>
                  </property>
                 </widget>
                </item>
@@ -101,7 +101,7 @@
                <item>
                 <widget class="QLabel" name="label">
                  <property name="text">
-                  <string>UserName</string>
+                  <string>用户名：</string>
                  </property>
                 </widget>
                </item>
@@ -121,7 +121,7 @@
                <item>
                 <widget class="QLabel" name="label_3">
                  <property name="text">
-                  <string>PassWord</string>
+                  <string>密  码：</string>
                  </property>
                 </widget>
                </item>
@@ -141,7 +141,7 @@
                <item>
                 <widget class="QLabel" name="label_4">
                  <property name="text">
-                  <string>DataBaseName</string>
+                  <string>库名称：</string>
                  </property>
                 </widget>
                </item>
@@ -161,7 +161,7 @@
                <item>
                 <widget class="QLabel" name="label_5">
                  <property name="text">
-                  <string>TableName</string>
+                  <string>表单名：</string>
                  </property>
                 </widget>
                </item>
@@ -343,21 +343,21 @@
                <item>
                 <widget class="QPushButton" name="MySQLSAVE_pushButton">
                  <property name="text">
-                  <string>SAVE</string>
+                  <string>保存配置</string>
                  </property>
                 </widget>
                </item>
                <item>
                 <widget class="QPushButton" name="MySQLLOAD_pushButton">
                  <property name="text">
-                  <string>LOAD</string>
+                  <string>加载配置</string>
                  </property>
                 </widget>
                </item>
                <item>
                 <widget class="QPushButton" name="MySQLOK_pushButton">
                  <property name="text">
-                  <string>OK</string>
+                  <string>确定</string>
                  </property>
                  <property name="shortcut">
                   <string>Return</string>
@@ -372,7 +372,7 @@
          </widget>
          <widget class="QWidget" name="Table_Tab">
           <attribute name="title">
-           <string>Table View</string>
+           <string>表单预览</string>
           </attribute>
           <layout class="QHBoxLayout" name="horizontalLayout_10">
            <item>
@@ -397,7 +397,7 @@
                  <item>
                   <widget class="QPushButton" name="TableRe_Btn">
                    <property name="text">
-                    <string>Refresh</string>
+                    <string>刷新</string>
                    </property>
                   </widget>
                  </item>
@@ -417,7 +417,7 @@
                  <item>
                   <widget class="QPushButton" name="TableOK_Btn">
                    <property name="text">
-                    <string>OK</string>
+                    <string>确定</string>
                    </property>
                    <property name="shortcut">
                     <string>Return</string>
@@ -622,7 +622,7 @@
          </widget>
          <widget class="QWidget" name="Var_Tab">
           <attribute name="title">
-           <string>Var Selection</string>
+           <string>选择变量</string>
           </attribute>
           <layout class="QHBoxLayout" name="horizontalLayout_11">
            <item>
@@ -655,7 +655,7 @@
                   </font>
                  </property>
                  <property name="title">
-                  <string>Var X</string>
+                  <string>变量 X</string>
                  </property>
                  <widget class="QWidget" name="layoutWidget">
                   <property name="geometry">
@@ -895,7 +895,7 @@
                   </font>
                  </property>
                  <property name="title">
-                  <string>Var Y</string>
+                  <string>变量 Y</string>
                  </property>
                  <property name="flat">
                   <bool>false</bool>
@@ -998,7 +998,7 @@
                     </size>
                    </property>
                    <property name="text">
-                    <string>Aplly</string>
+                    <string>应用</string>
                    </property>
                   </widget>
                  </item>
@@ -1011,7 +1011,7 @@
                     </size>
                    </property>
                    <property name="text">
-                    <string>OK</string>
+                    <string>确定</string>
                    </property>
                    <property name="shortcut">
                     <string>Return</string>
@@ -1061,7 +1061,7 @@
   </layout>
  </widget>
  <resources>
-  <include location="resouce/Resource.qrc"/>
+  <include location="../resource/Resource.qrc"/>
  </resources>
  <connections/>
 </ui>

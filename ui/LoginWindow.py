@@ -114,7 +114,7 @@ class Ui_LoginForm(object):
 
     def retranslateUi(self, LoginForm):
         _translate = QtCore.QCoreApplication.translate
-        LoginForm.setWindowTitle(_translate("LoginForm", "Login"))
+        LoginForm.setWindowTitle(_translate("LoginForm", "登录"))
         self.label.setText(_translate("LoginForm", "用户名"))
         self.line_Username.setPlaceholderText(_translate("LoginForm", "输入用户名"))
         self.label_2.setText(_translate("LoginForm", "密  码"))

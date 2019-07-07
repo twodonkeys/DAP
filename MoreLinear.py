@@ -73,6 +73,7 @@ def DXSMain(MySQL,Data,SelectX=[True,True,True,True],degree=2):
     x_test= poly_reg.fit_transform(x_test)
     lineargression=LinearRegression()
     rf=lineargression.fit(x_train,y_train)
+    joblib.dump(rf,'model/morelinear.model')
     #原特征经过多项式特征增加后各特征的组合方式（列名）
     X_ploly_df = pd.DataFrame(x_test, columns=poly_reg.get_feature_names())
     lie = X_ploly_df.columns.values.tolist()
